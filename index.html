@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>World Energy Consumption Visualisation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <script src="scripts/d3.tip.js" charset="utf-8"></script>
+    <script src="scripts/papaparse.min.js" charset="utf-8"></script>
+    <script src="scripts/barChart.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="scripts/geoMap.js"></script>
+    <script src="scripts/d3-legend.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="css/slider.css"> -->
+    <link rel="stylesheet" href="css/range_slider.css" />
+		<link rel="shortcut icon" href="earth (2).png" type="image/x-icon">
+
+    <style>
+      .d3-tip {
+        line-height: 1;
+        font-weight: bold;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.2);
+        color: #fff;
+        border-radius: 5px;
+      }
+
+      .d3-tip:after {
+        box-sizing: border-box;
+        display: inline;
+        font-size: 10px;
+        width: 100%;
+        line-height: 1;
+        color: rgba(0, 0, 0, 0.2);
+        content: "\25BC";
+        position: absolute;
+        text-align: center;
+      }
+
+      .d3-tip.n:after {
+        margin: -1px 0 0 0;
+        top: 100%;
+        left: 0;
+      }
+
+      text {
+        font-family: Arial;
+        font-size: 15px;
+      }
+
+      .form-control {
+        width: 300px;
+      }
+
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+      }
+      .tick text {
+        fill: black;
+        font-size: 11px;
+      }
+
+      ul.tab {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        border: 1px solid #f00;
+        background-color: #de2d26;
+      }
+
+
+      /* Style the links inside the list items */
+      ul.tab li a {
+        display: inline-block;
+        color: black;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        transition: 0.3s;
+        font-size: 17px;
+      }
+
+      /* Change background color of links on hover */
+      ul.tab li a:hover {
+        background-color: #333;
+      }
+
+      /* Create an active/current tablink class */
+      ul.tab li a:focus,
+      .active {
+        background-color: azure;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        -webkit-animation: fadeEffect 1s;
+        animation: fadeEffect 1s;
+      }
+
+      @-webkit-keyframes fadeEffect {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeEffect {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .bar:hover {
+        fill: #ddd;
+      }
+      .container {
+        width: 300px;
+        height: 100px;
+        overflow-y: scroll;
+      }
+
+      .tabi {
+        color: cadetblue;
+        font-size: 18px;
+      }
+
+      .pan rect,
+      .zoom rect {
+        fill: black;
+        opacity: 0.2;
+        rx: 5;
+        ry: 5;
+      }
+
+      .zoom rect {
+        rx: 5; /* Rounded corners */
+        ry: 5;
+      }
+
+      .pan text,
+      .zoom text {
+        fill: black;
+        font-size: 18px;
+        text-anchor: middle;
+      }
+
+      .pan:hover rect,
+      .pan:hover text,
+      .zoom:hover rect,
+      .zoom:hover text {
+        fill: #52b788;
+        cursor: pointer;
+      }
+
+      #countryContainer {
+        background-color: #40916c;
+        width: 180px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+      }
+
+      #countryName {
+        font-size: 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin-top: 7px;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tabcontent" id="first" style="overflow-x: auto">
+      <label style="position: absolute; font-size: 15px; left: 80px; top: 45px"
+        >Energy Type: </label
+      ><select
+        class="form-control"
+        id="energyTypeList"
+        style="position: absolute; left: 200px; top: 40px"
+      ></select>
+      <label style="position: absolute; font-size: 15px; left: 550px; top: 45px"
+        >Component: </label
+      ><select
+        class="form-control"
+        id="componentWidget"
+        style="position: absolute; left: 670px; top: 40px"
+      ></select>
+      <div
+        id="countryContainer"
+        style="position: absolute; left: 1170px; top: 40px"
+      >
+        <p id="countryName">North America</p>
+      </div>
+
+      <input
+        type="radio"
+        id="barStyle0"
+        name="chartStyle0"
+        value="barChart"
+        checked="checked"
+        style="position: absolute; left: 1115px; top: 140px"
+      />
+      <label style="position: absolute; left: 1140px; top: 140px" for=""
+        >Bar Chart</label
+      >
+      <input
+        type="radio"
+        id="lineStyle0"
+        name="chartStyle0"
+        value="lineChart"
+        style="position: absolute; left: 1315px; top: 140px"
+      />
+      <label style="position: absolute; left: 1340px; top: 140px" for=""
+        >Line Chart</label
+      >
+
+      <button
+        id="drawChartDisplay"
+        class="btn btn-success"
+        onclick="firstTabFunc.drawChart()"
+        style="position: absolute; left: 1235px; top: 190px"
+      >
+        Draw
+      </button>
+
+      <label
+        id="label1"
+        style="
+          position: absolute;
+          left: 1030px;
+          top: 280px;
+          color: grey;
+          font-size: 15px;
+        "
+        for=""
+      ></label>
+
+      <div style="position: absolute; left: 920px; top: 250px">
+        <svg id="main1" width="800" height="500"></svg>
+      </div>
+
+      <div style="position: absolute; left: 50px; top: 105px">
+        <svg id="main2" width="1000" height="700"></svg>
+      </div>
+      <div id="map_tooltip" class="hidden">
+        <p><strong>Important Label Heading</strong></p>
+        <p><span id="value">100</span>%</p>
+      </div>
+      -->
+    </div>
+    <div
+      class="range-slider"
+      style="
+        position: absolute;
+        left: 80px;
+        top: 690px;
+        --min: 1980;
+        --max: 2012;
+        --step: 1;
+        --value: 2012;
+        --text-value: '2012';
+      "
+    >
+      <input
+        id="myRange"
+        type="range"
+        min="1980"
+        max="2012"
+        step="1"
+        value="2012"
+        oninput="this.parentNode.style.setProperty('--value',this.value); this.parentNode.style.setProperty('--text-value', JSON.stringify(this.value))"
+      />
+      <output></output>
+      <div class="range-slider__progress"></div>
+    </div>
+  </body>
+</html>
