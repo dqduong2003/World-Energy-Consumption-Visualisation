@@ -11,3 +11,6 @@ The purpose of this visualisation is to compare the consumption and production o
 * Select between different types of energy to display
 * Select between energy production and consumption
 * Observe each country’s fluctuation over time by the bar chart or line chart
+
+## Website
+https://dqduong2003.github.io/World-Energy-Consumption-Visualisation/
