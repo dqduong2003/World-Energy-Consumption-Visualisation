@@ -356,14 +356,18 @@ var labelList = ["Total Primary Energy Production (quadrillion BTU)",
 
 			var tip = d3.tip()
 				.attr('class', 'd3-tip')
-				.offset([-10, 0])
+				.offset([-12, 0])
 				.html(function(d) {
-				return "<strong>Value:</strong> <span style='color:red'>" + d + "</span>";
+				return "<strong>Value:</strong> <span style='color:#dc2f02'>" + d + "</span>";
 			})
 			  
 			group.call(tip);
 
-			
+			// a linear scale for colors
+			var colors = d3.scaleLinear()
+										.domain([d3.min(energyProductionUSA), d3.max(energyProductionUSA)])
+										.range(["#99e2b4", "#054a29"]);
+
 			// the rectangle will be drawn from upper-left corner - co-ordinate system starts at the upper-left	screen
 			var myChart = 
 			group.selectAll("rect").data(energyProductionUSA).enter().append('rect')
@@ -377,7 +381,10 @@ var labelList = ["Total Primary Energy Production (quadrillion BTU)",
 				})
 				.attr("width", barWidth)
 				.style("stroke", "white")
-				.style("fill", "#90EE90")
+				// .style("fill", "#90EE90")
+				.attr("fill", function(d) {
+					return colors(d)
+				})
 				.on('mouseover', tip.show)
 				.on('mouseout', tip.hide);
 			

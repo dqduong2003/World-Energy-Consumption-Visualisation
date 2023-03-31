@@ -109,7 +109,7 @@ function colorSet(energySelection) {
         colors = ["#edf8e9", "#bae4b3", "#74c476", "#31a354", "#006d2c"];
         break;
       case "Renewable Biofuels":
-        colors = ["#ffffcc", "#a1dab4", "#41b6c4", "#a2c7fb8", "#253494"];
+        colors = ["#ffffcc", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"];
         break;
       case "Petroleum":
         colors = ["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20", "#bd0026"];
