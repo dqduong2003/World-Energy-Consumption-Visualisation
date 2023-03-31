@@ -249,25 +249,39 @@
         for=""
       ></label>
 
+      <!-- The bar chart/lien chart -->
       <div style="position: absolute; left: 920px; top: 250px">
         <svg id="main1" width="800" height="500"></svg>
       </div>
 
-      <div style="position: absolute; left: 50px; top: 105px">
+      <!-- instruction 1 -->
+      <p style="position: absolute; left: 70px; top: 105px">Select the country by clicking on the map:</p>
+      <!-- The choropleth -->
+      <div style="position: absolute; left: 50px; top: 128px">
         <svg id="main2" width="1000" height="700"></svg>
       </div>
       <div id="map_tooltip" class="hidden">
-        <p><strong>Important Label Heading</strong></p>
+        <p><strong>Label Heading</strong></p>
         <p><span id="value">100</span>%</p>
       </div>
       -->
     </div>
+
+    <!-- instruction 2 -->
+    <p style="
+    position: absolute;
+    left: 90px;
+    top: 670px;
+    --min: 1980;
+    --max: 2012;">Select the year to display:</p>
+
+    <!-- year range slider -->
     <div
       class="range-slider"
       style="
         position: absolute;
         left: 80px;
-        top: 690px;
+        top: 715px;
         --min: 1980;
         --max: 2012;
         --step: 1;

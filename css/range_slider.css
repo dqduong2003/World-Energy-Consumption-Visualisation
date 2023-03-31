@@ -1,3 +1,4 @@
+/* Credit: Code from https://codepen.io/vsync/pen/mdEJMLv by Yair Even Or*/
 .range-slider {
   --primary-color: #40916c;
   --value-offset-y: var(--ticks-gap);

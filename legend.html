@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<style>
+body {
+  max-width: 960px;
+}
+.legend {
+  display: table;
+  margin: 0 auto;
+  font-family: "Helvetica Neue", sans-serif;
+  font-size: 12px;
+  height: 35px;
+  width: 250px;
+}
+</style>
+
+<body>
+<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="https://d3js.org/queue.v1.min.js"></script>
+<script src="https://d3js.org/topojson.v1.min.js"></script>
+<script src="https://unpkg.com/rbush@1.4.3/rbush.js"></script>
+<script src="https://unpkg.com/spamjs@1.1.0/spam.min.js"></script>
+<script src="https://unpkg.com/d3-svg-legend@1.13.0/d3-legend.min.js"></script>
+
+<script type='text/javascript'>
+var color = d3.scale
+  .linear()
+  .domain([0.1, 0.18, 0.26, 0.33, 0.41])
+  .range(["#ca0020", "#f4a582", "#f7f7f7", "#92c5de", "#0571b0"]);
+
+d3
+  .select("body")
+  .append("svg")
+  .attr("class", "legend");
+
+var legend = d3.legend
+  .color()
+  .shapeHeight(10)
+  .shapeWidth(50)
+  .shapePadding(0)
+  .labelOffset(5)
+  .labelFormat(d3.format("%"))
+  .orient("horizontal")
+  .labelAlign("start")
+  .scale(color);
+
+d3.select(".legend").call(legend);
+
+d3.json("bcn.json", function(error, d) {
+  topojson.presimplify(d);
+  var map = new StaticCanvasMap({
+    element: "body",
+    width: 960,
+    height: 650,
+    projection: d3.geo
+      .mercator()
+      .center([29.6, 30.47])
+      .scale(250000)
+      .rotate([0, 0, -37.6]),
+    data: [
+      {
+        features: topojson.feature(d, d.objects["bcn"]),
+        static: {
+          paintfeature: function(parameters, d) {
+            parameters.context.fillStyle = color(d.properties.rate);
+            parameters.context.fill();
+
+            parameters.context.lineWidth = 0.5;
+            parameters.context.strokeStyle = "rgba(0,0,0,0.2)";
+            parameters.context.stroke();
+          }
+        }
+      }
+    ]
+  });
+  map.init();
+});
+</script>
+
+</html>
